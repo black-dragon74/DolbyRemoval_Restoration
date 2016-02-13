@@ -1,0 +1,89 @@
+#!/sbin/sh
+OUTFD=$2
+ZIP=$3
+
+SYSTEMLIB=/system/lib
+
+ui_print() {
+  echo -n -e "ui_print $1\n" > /proc/self/fd/$OUTFD
+  echo -n -e "ui_print\n" > /proc/self/fd/$OUTFD
+}
+
+# First we will remove all the files that we have placed in the system directory
+
+# Let's start
+
+ui_print " "
+ui_print "- Restoration zip by black.dragon74"
+ui_print " "
+ui_print "- This will also install original AudioFX"
+ui_print " "
+ui_print "- Mounting base file systems.."
+ui_print " "
+mount /system
+mount -o rw,remount /system
+mount -o rw,remount /system /system
+
+# Removing all the stuffs that i had installed
+
+ui_print "- Removing all the stuffs"
+ui_print " "
+rm -rf /system/app/AudioFX*
+rm -rf /system/priv-app/AudioFX*
+rm -f /system/etc/waves/default.mps
+rm -f /system/vendor/etc/audio_effects.conf
+rm -f /system/vendor/lib/libgnustl_shared.so
+rm -f /system/vendor/lib/libMA3-wavesfx-Coretex_A9.so
+rm -f /system/vendor/lib/libMA3-wavesfx-Qualcomm.so
+rm -f /system/vendor/lib/soundfx/libmaxxeffect-cembedded.so
+rm -f /system/vendor/lib/soundfx/libqcbassboost.so
+rm -f /system/vendor/lib/soundfx/libqcreverb.so
+rm -f /system/vendor/lib/soundfx/libqcvirt.so
+rm -rf /system/app/Ds*
+rm -rf /system/DsUI*
+rm -f /system/dolby/ds1-default.xml
+rm -rf /system/etc/audio_effects.conf
+rm -f /system/etc/permissions/android.dolby.xml
+rm -f /system/lib/libstagefright_soft_ddpdec.so
+rm -f /system/lib/soundfx/libdseffect.so
+rm -f /system/vendor/etc/audio_effects.conf
+rm -rf /system/app/As
+rm -rf /system/app/AsUI
+rm -f /system/lib/soundfx/libswdap-mod.so
+rm -f /system/lib/libdlbdapstorage.so
+rm -f /system/etc/dolby
+
+# Unzipping the zip file
+
+ui_print "- Unzipping the bundle.."
+ui_print " "
+cd /tmp
+mkdir nick
+cd nick
+unzip -o "$ZIP"
+
+# Let's Place the basic Cyanogenmod Files
+
+ui_print "- Restoring stuffs and libs"
+ui_print " "
+mkdir -p /system/app/AudioFX && chmod -R 755 /system/app/AudioFX
+cp /tmp/nick/app/AudioFX/AudioFX.apk /system/app/AudioFX/AudioFX.apk
+chmod 644 /system/app/AudioFX/AudioFX.apk
+cp /tmp/nick/etc/audio_effects.conf /system/etc/audio_effects.conf
+chmod 644 /system/etc/audio_effects.conf
+cp /tmp/nick/vendor/etc/audio_effects.conf /system/vendor/etc/audio_effects.conf
+chmod 644 /system/vendor/etc/audio_effects.conf
+cp /tmp/nick/vendor/lib/soundfx/libqcbassboost.so /system/vendor/lib/soundfx/libqcbassboost.so
+chmod 644 /system/vendor/lib/soundfx/libqcbassboost.so
+cp /tmp/nick/vendor/lib/soundfx/libqcreverb.so /system/vendor/lib/soundfx/libqcreverb.so
+chmod 644 /system/vendor/lib/soundfx/libqcreverb.so
+cp /tmp/nick/vendor/lib/soundfx/libqcvirt.so /system/vendor/lib/soundfx/libqcvirt.so
+chmod 644 /system/vendor/lib/soundfx/libqcvirt.so
+ui_print "- Restore Complete"
+ui_print " "
+
+# Unmount and clean
+rm -rf/tmp/nick
+umount /system
+ui_print "- Regards from black.dragon74"
+ui_print " "
